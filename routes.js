@@ -98,6 +98,4 @@ function groupToMd() {
     console.log(md.join(NL));
 }
 
-//groupToMd();
-//console.log(process.cwd());
-var lol = require(process.cwd() + '/lol.js');
+groupToMd();
