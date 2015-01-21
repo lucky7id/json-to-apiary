@@ -2,6 +2,9 @@ var _ = require('lodash');
 var fs = require('fs');
 var grunt = require('grunt');
 
+process.chdir('../src');
+var config = require('config');
+
 var routes = [{
     groupName: 'billing',
     groupDescription: 'adds billing',
@@ -98,4 +101,8 @@ function groupToMd() {
     console.log(md.join(NL));
 }
 
-groupToMd();
+function findGroups() {
+ console.log(config);
+}
+
+findGroups();
