@@ -2,53 +2,7 @@ var _ = require('lodash');
 var fs = require('fs');
 var grunt = require('grunt');
 
-process.chdir('../src');
-var config = require('config');
-
-var routes = [{
-    groupName: 'billing',
-    groupDescription: 'adds billing',
-    routes: [{
-        'route': '/billing',
-        'name': 'Billing Collection',
-        'methods': ['GET'],
-    }, {
-        'route': '/billing/{id}',
-        'name': 'Single Billing Item',
-        'methods': ['GET']
-    }, {
-        'route': '/billing/logs',
-        'name': 'Log collection',
-        'methods': ['GET']
-    }, {
-        'route': '/billing/logs/{id}',
-        'name': 'Single Log',
-        'methods': ['GET']
-    }, {
-        'route': '/billing/cards',
-        'name': 'Card collection',
-        'methods': ['GET', 'POST']
-    }, {
-        'route': '/billing/{id}/cards',
-        'name': 'Single card',
-        'api': [
-            {
-                'method': 'POST',
-                'responseCode': 200,
-                'description': 'Card Collection',
-                'request': {
-                    "creditCardId": 300,
-                    "cardNumber": 300,
-                    "expDate": 300,
-                    "billingAddress": 'x',
-                    "billingZip": 'x',
-                    "billingCity": 'a',
-                    "billingState": 'a'
-                }
-            }
-        ]   
-    }]
-}];
+process.chdir('../../src');
 
 var TABSPACE = '        ';
 var NL = '\n';
@@ -88,7 +42,7 @@ function routesToMD(routes) {
     return md;
 }
 
-function groupToMd() {
+function groupToMd(routes) {
     var md = _.map(routes, function(group) {
         var str = '';
         var groupDescription = group.groupDescription || group.groupName + ' Group';
@@ -98,11 +52,21 @@ function groupToMd() {
         return str;
     });
 
-    console.log(md.join(NL));
+    fs.writeFileSync('apiary.md',md.join(NL));
 }
 
 function findGroups() {
- console.log(config);
+    var config = require(process.cwd() + '/config');
+    var routes = _.map(config, function(route, name){
+        return {
+            groupName: name,
+            groupDescription: route.description,
+            routes: _.map(grunt.file.expand(route.files, function(file){
+                return require(file);
+            }))
+        };
+    });
+    groupToMd(routes);
 }
 
 findGroups();
