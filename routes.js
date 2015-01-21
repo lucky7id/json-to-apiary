@@ -1,9 +1,6 @@
 var _ = require('lodash');
 var fs = require('fs');
 var grunt = require('grunt');
-
-process.chdir('../../src');
-
 var TABSPACE = '        ';
 var NL = '\n';
 
@@ -43,6 +40,7 @@ function routesToMD(routes) {
 }
 
 function groupToMd(routes) {
+
     var md = _.map(routes, function(group) {
         var str = '';
         var groupDescription = group.groupDescription || group.groupName + ' Group';
@@ -51,7 +49,6 @@ function groupToMd(routes) {
         str += routesToMD(group.routes);
         return str;
     });
-
     fs.writeFileSync('apiary.md',md.join(NL));
 }
 
@@ -61,9 +58,9 @@ function findGroups() {
         return {
             groupName: name,
             groupDescription: route.description,
-            routes: _.map(grunt.file.expand(route.files, function(file){
-                return require(file);
-            }))
+            routes: _.map(grunt.file.expand(route.files), function(file){
+                return require(process.cwd() + '/' + file);
+            })
         };
     });
     groupToMd(routes);
