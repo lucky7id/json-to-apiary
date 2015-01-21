@@ -53,7 +53,7 @@ function groupToMd(routes) {
 }
 
 function findGroups() {
-    var config = require(process.cwd() + '/config');
+    var config = require(process.cwd() + '/src/config');
     var routes = _.map(config, function(route, name){
         return {
             groupName: name,
